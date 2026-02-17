@@ -22,6 +22,19 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM IParam)
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
+		case IDC_BUTTON_COPY:
+		{
+			CONST INT SIZE = 256; // Размер буфера в 256 байт
+			CHAR sz_buffer[SIZE] = {}; // Текстовый буфер
+			// Поулчаем текстовые поля, чтобы к ним можно было обращаться
+			HWND hEditLogin = GetDlgItem(hwnd, IDC_EDIT_LOGIN);
+			HWND hEditPassword = GetDlgItem(hwnd, IDC_EDIT_PASSWORD);
+			// Для того, чтобы обратиться к какому-либо элементу окна,
+			// ему нужно отправить сообщение
+			SendMessage(hEditLogin, WM_GETTEXT, SIZE, (LPARAM)sz_buffer); // Считываем текст из поля 'Login'
+			SendMessage(hEditPassword, WM_SETTEXT, 0, (LPARAM)sz_buffer); // Загружаем
+		}
+		break;
 		case IDOK:
 			MessageBox(hwnd, "Была нажата кнопка ОК", "info", MB_OK | MB_ICONINFORMATION);
 			break;
