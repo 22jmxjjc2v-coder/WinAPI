@@ -1,6 +1,10 @@
 #include <Windows.h>
 #include "resource.h"
 
+CONST CHAR h_sz_INVITE[] = "Введите имя пользователя";
+// g - Global (глобальная переменная или константа)
+//sz_ - String Zero (строка, заканчивающайся нулем - NULL Terminatel Line)
+
 BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM IParam);
 
 INT WINAPI WinMain(HINSTANCE hInsance, HINSTANCE hPrevInst, LPSTR IpCmdLine, INT nCmdShow)
@@ -11,17 +15,35 @@ INT WINAPI WinMain(HINSTANCE hInsance, HINSTANCE hPrevInst, LPSTR IpCmdLine, INT
 
 BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM IParam)
 {
+	//HWND - Handler to Window. Это указатель, при помощи, которого можно обратиться
+	// к окну ( указатель, на, который модно отправить сообщение - SendMEssage)
 	switch (uMsg)
 	{
 	case WM_INITDIALOG:
 	{
 		HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));
 		SendMessage(hwnd, WM_SETICON, 0, (LPARAM)hIcon);
+		
+		HWND hEditLogin = GetDlgItem(hwnd, IDC_EDIT_LOGIN);
+		SendMessage(hEditLogin, WM_SETTEXT, 0, (LPARAM)g_sz_INVITE);
 	}
 	break;
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
+		case IDC_EDIT_LOGIN:
+		{
+			//WPARAM - это DWORD
+			CONST INT SIZE = 256;
+			CHAR sz_buffer[SIZE] = {};
+			HWND hEditLogin = GetDlgItem(hwnd, IDC_EDIT_LOGIN);
+			SendMessage(hEditLogin, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
+			if (HIWORD(wParam) == EN_SETFOCUS && strcmp(sz_buffer, g_sz_INVITE) == 0)
+			    SendMessage(hEditLogin, WM_SETTEXT, 0, (LPARAM)"");
+			if(HIWORD(wParam) == EN_KILLFOCUS && strcmp(sz_buffer, "") == 0)
+				SendMessage(hEditLogin, WM_SETTEXT, 0, (LPARAM)g_sz_INVITE);
+		}
+		break;
 		case IDC_BUTTON_COPY:
 		{
 			CONST INT SIZE = 256; // Размер буфера в 256 байт
